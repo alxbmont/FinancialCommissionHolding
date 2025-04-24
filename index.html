@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Financial Commission Holdings</title>
+  <title>Financial Commission Holdings - Updated Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -18,46 +18,47 @@
       color: #1e293b;
       background: #f8fafc;
     }
-    /* For status badges and verification */
-    .badge-green {
-      background: #10b981;
-      color: #fff;
-      padding: 0.15rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-    }
-    /* Hide page overflow for PDF export */
-    html { overflow: auto;}
-    /* Chart container sizing for PDF export */
-    .chart-container { height: 170px; margin-bottom: 0.5rem;}
-    /* Timeline step */
-    .timeline-step { display: flex; align-items: center; font-size: 0.942rem;}
-    .timeline-dot { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; margin-right: 0.5rem;}
-    .dot-done { background: #10b981;}
-    .dot-pending { background: #fbbf24;}
-    .dot-future { background: #d1d5db;}
-    .timeline-step + .timeline-step { margin-top: .7rem;}
-    /* Shadow for cards */
     .card {
       background: #fff;
       border-radius: 0.8rem;
       box-shadow: 0 2px 6px 0 rgba(30,41,59,0.08);
       padding: 1.2rem;
     }
-    /* Responsive tweaks for PDF export */
+    .badge-green {
+      background: #10b981;
+      color: #fff;
+      padding: 0.15rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+    }
+    .timeline-step {
+      display: flex;
+      align-items: center;
+      font-size: 0.942rem;
+    }
+    .timeline-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-right: 0.5rem;
+    }
+    .dot-done { background: #10b981; }
+    .dot-pending { background: #fbbf24; }
+    .dot-future { background: #d1d5db; }
+    .timeline-step + .timeline-step { margin-top: .7rem; }
+    /* No horizontal scrolls on PDF export; single column for smaller screens */
     @media (max-width: 900px) {
-      .grid-cols-2 { grid-template-columns: 1fr !important; }
-      .md\:grid-cols-2 { grid-template-columns: 1fr !important; }
+      .grid-cols-2, .md\:grid-cols-2 { grid-template-columns: 1fr !important; }
       .md\:grid-cols-3 { grid-template-columns: 1fr !important; }
     }
+    /* Chart container size for PDF export */
+    .chart-container { height: 170px; margin-bottom: .5rem;}
     .fa-circle-notch { animation: fa-spin 2s infinite linear; }
-    @keyframes fa-spin {
-      0% { transform: rotate(0deg);}
-      100% { transform: rotate(360deg);}
-    }
+    @keyframes fa-spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
   </style>
 </head>
 <body class="min-h-screen pt-8 pb-8">
@@ -67,9 +68,7 @@
       <div>
         <h1 class="text-3xl font-bold tracking-tight text-gray-800">Financial Commission Holdings</h1>
         <div class="flex items-center mt-2">
-          <span class="badge-green mr-1">
-            <i class="fa fa-check-circle mr-1"></i>Verified
-          </span>
+          <span class="badge-green mr-1"><i class="fa fa-check-circle mr-1"></i>Verified</span>
           <span class="text-xs text-gray-500 ml-1">Dashboard ID: FCH-2023-045912</span>
         </div>
       </div>
@@ -97,7 +96,7 @@
         <span class="w-3 h-3 bg-green-400 rounded-full inline-block mr-3"></span>
         <div>
           <div class="text-xs text-blue-200">Current ETH Price</div>
-          <div class="text-lg font-bold" id="eth-price">$1,767.75</div>
+          <div class="text-lg font-bold" id="eth-price">$1,763.83</div>
         </div>
       </div>
     </div>
@@ -105,9 +104,11 @@
     <div class="mb-6 card text-sm text-gray-700 flex items-center">
       <i class="fas fa-lock text-blue-500 mr-3"></i>
       <div>
-      <span class="font-semibold">IMPORTANT NOTICE:</span> The principal amount is guaranteed by Financial Commission Holdings.<br class="sm:hidden"> Returns are subject to external review of the positions taken in the trading platform used.<br>
-      Final disbursement will be determined following comprehensive verification procedures.<br>
-      Funds will be released according to the information provided, at times the Financial Commission deems appropriate and following verification protocols.
+        <span class="font-semibold">IMPORTANT NOTICE:</span>
+        The principal amount is guaranteed by Financial Commission Holdings.<br>
+        Returns are subject to external review of the positions taken in the trading platform used.<br>
+        Final disbursement will be determined following comprehensive verification procedures.<br>
+        Funds will be released according to the information provided, at times the Financial Commission deems appropriate and following verification protocols.
       </div>
     </div>
     <!-- Portfolio Value & Security -->
@@ -129,7 +130,7 @@
         </div>
         <div class="bg-gradient-to-tl from-gray-50 via-gray-100 to-white rounded-lg px-4 py-3 mb-0.5 h-24 flex flex-col justify-center">
           <div class="text-gray-500 text-xs mb-1">Total USD Value</div>
-          <div class="text-2xl font-bold text-gray-800" id="total-usd">$12,422,163.63</div>
+          <div class="text-2xl font-bold text-gray-800" id="total-usd">$12,355,922.77</div>
         </div>
       </div>
     </div>
@@ -140,8 +141,12 @@
         <canvas id="assetChart" style="max-width: 310px;"></canvas>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-center text-xs md:text-sm">
-        <div class="flex items-center justify-center space-x-2"><span class="w-3 h-3 bg-blue-500 rounded-full inline-block"></span><span>Wallet 1 (69.4%)</span></div>
-        <div class="flex items-center justify-center space-x-2"><span class="w-3 h-3 bg-green-400 rounded-full inline-block"></span><span>Wallet 2 (30.6%)</span></div>
+        <div class="flex items-center justify-center space-x-2">
+          <span class="w-3 h-3 bg-blue-500 rounded-full inline-block"></span><span>Wallet 1 (69.4%)</span>
+        </div>
+        <div class="flex items-center justify-center space-x-2">
+          <span class="w-3 h-3 bg-green-400 rounded-full inline-block"></span><span>Wallet 2 (30.6%)</span>
+        </div>
       </div>
     </div>
     <!-- Verification Timeline & Monitoring -->
@@ -211,7 +216,8 @@
             <div>
               <div class="text-sm font-semibold text-gray-800">Wallet 1</div>
               <span class="text-xs text-gray-500 bg-gray-100 rounded-md px-2 py-1 mr-2">
-                <i class="fas fa-fingerprint mr-1"></i> Property of Alejandro Barron Monterrubio
+                <i class="fas fa-fingerprint mr-1"></i>
+                Property of Alejandro Barron Monterrubio
               </span>
             </div>
             <span class="badge-green">
@@ -233,8 +239,11 @@
               </div>
               <div>
                 <div class="text-xs text-gray-400">Value (USD)</div>
-                <div class="text-lg font-bold text-gray-800">$8,637,692.51</div>
+                <div class="text-lg font-bold text-gray-800">$8,579,846.34</div>
               </div>
+            </div>
+            <div class="text-xs text-gray-500 mb-0.5">
+              Token Holdings: <strong class="text-green-700">$3,506.15</strong>
             </div>
             <div class="flex items-center mt-1">
               <span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
@@ -248,7 +257,8 @@
             <div>
               <div class="text-sm font-semibold text-gray-800">Wallet 2</div>
               <span class="text-xs text-gray-500 bg-gray-100 rounded-md px-2 py-1 mr-2">
-                <i class="fas fa-fingerprint mr-1"></i> Property of Alejandro Barron Monterrubio
+                <i class="fas fa-fingerprint mr-1"></i>
+                Property of Alejandro Barron Monterrubio
               </span>
             </div>
             <span class="badge-green">
@@ -270,8 +280,11 @@
               </div>
               <div>
                 <div class="text-xs text-gray-400">Value (USD)</div>
-                <div class="text-lg font-bold text-gray-800">$3,784,471.12</div>
+                <div class="text-lg font-bold text-gray-800">$3,776,076.43</div>
               </div>
+            </div>
+            <div class="text-xs text-gray-500 mb-0.5">
+              Token Holdings: <strong class="text-green-700">$0.00</strong>
             </div>
             <div class="flex items-center mt-1">
               <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
@@ -337,7 +350,7 @@
     </footer>
   </div>
   <script>
-    // Chart rendering logic
+    // Chart rendering logic for Asset Overview
     window.addEventListener('DOMContentLoaded', () => {
       // Donut Chart (Combined ETH)
       const wallet1 = 4864.32;
@@ -350,8 +363,8 @@
           datasets: [{
             data: [wallet1, wallet2],
             backgroundColor: [
-              'rgba(59, 130, 246, 0.85)', // blue
-              'rgba(16, 185, 129, 0.85)'  // green
+              'rgba(59, 130, 246, 0.85)',  // blue
+              'rgba(16, 185, 129, 0.85)'   // green
             ],
             borderWidth: 0
           }]
@@ -359,14 +372,16 @@
         options: {
           plugins: {
             legend: { display: false },
-            tooltip: { callbacks: {
-              label: function(context) {
-                const val = context.raw || 0;
-                const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                const pct = Math.round((val/total)*1000)/10;
-                return `${context.label}: ${val.toLocaleString()} ETH (${pct}%)`;
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const val = context.raw || 0;
+                  const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                  const pct = Math.round((val / total) * 1000) / 10;
+                  return `${context.label}: ${val.toLocaleString()} ETH (${pct}%)`;
+                }
               }
-            }}
+            }
           },
           cutout: '78%',
           responsive: true,
@@ -374,7 +389,7 @@
         }
       });
     });
-    // Copy to clipboard
+    // Copy to clipboard function
     function copyToClipboard(addr) {
       if (navigator.clipboard) {
         navigator.clipboard.writeText(addr);
