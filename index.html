@@ -1,677 +1,391 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Commission Holdings</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
-        }
-        .bg-gradient-blue {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-        }
-        .bg-gradient-light {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        }
-        .verification-badge {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            display: inline-flex;
-            align-items: center;
-            color: white;
-            font-size: 0.75rem;
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .card {
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            background-color: white;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
-        }
-        .wallet-header {
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-        .animated-value {
-            position: relative;
-        }
-        .animated-value::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
-            animation: shimmer 2s infinite;
-            transform: translateX(-100%);
-        }
-        @keyframes shimmer {
-            100% {
-                transform: translateX(100%);
-            }
-        }
-        .chart-container {
-            height: 200px;
-            position: relative;
-        }
-        .ping {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-        }
-        .ping::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #10b981;
-            position: absolute;
-            left: -16px;
-            animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-        }
-        @keyframes ping {
-            75%, 100% {
-                transform: scale(2);
-                opacity: 0;
-            }
-        }
-        .confirmation-counter {
-            width: 100%;
-            height: 6px;
-            background-color: #e2e8f0;
-            border-radius: 9999px;
-            overflow: hidden;
-            position: relative;
-        }
-        .confirmation-progress {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981, #3b82f6);
-            border-radius: 9999px;
-            width: 75%;
-            animation: progress 3s ease-in-out infinite;
-        }
-        @keyframes progress {
-            0% {
-                width: 65%;
-            }
-            50% {
-                width: 85%;
-            }
-            100% {
-                width: 65%;
-            }
-        }
-        .ticker {
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .ticker-content {
-            display: inline-block;
-            animation: ticker 20s linear infinite;
-        }
-        @keyframes ticker {
-            0% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Financial Commission Holdings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+  <!-- Google Fonts (Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #1e293b;
+      background: #f8fafc;
+    }
+    /* For status badges and verification */
+    .badge-green {
+      background: #10b981;
+      color: #fff;
+      padding: 0.15rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+    }
+    /* Hide page overflow for PDF export */
+    html { overflow: auto;}
+    /* Chart container sizing for PDF export */
+    .chart-container { height: 170px; margin-bottom: 0.5rem;}
+    /* Timeline step */
+    .timeline-step { display: flex; align-items: center; font-size: 0.942rem;}
+    .timeline-dot { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; margin-right: 0.5rem;}
+    .dot-done { background: #10b981;}
+    .dot-pending { background: #fbbf24;}
+    .dot-future { background: #d1d5db;}
+    .timeline-step + .timeline-step { margin-top: .7rem;}
+    /* Shadow for cards */
+    .card {
+      background: #fff;
+      border-radius: 0.8rem;
+      box-shadow: 0 2px 6px 0 rgba(30,41,59,0.08);
+      padding: 1.2rem;
+    }
+    /* Responsive tweaks for PDF export */
+    @media (max-width: 900px) {
+      .grid-cols-2 { grid-template-columns: 1fr !important; }
+      .md\:grid-cols-2 { grid-template-columns: 1fr !important; }
+      .md\:grid-cols-3 { grid-template-columns: 1fr !important; }
+    }
+    .fa-circle-notch { animation: fa-spin 2s infinite linear; }
+    @keyframes fa-spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+  </style>
 </head>
-<body class="min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Header -->
-        <header class="mb-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-800">Financial Commission Holdings</h1>
-                    <div class="flex items-center mt-2">
-                        <div class="verification-badge mr-2">
-                            <i class="fas fa-shield-alt mr-1"></i> Verified
-                        </div>
-                        <p class="text-sm text-gray-600">Dashboard ID: FCH-2023-045912</p>
-                    </div>
-                </div>
-                <div class="mt-4 md:mt-0">
-                    <div class="bg-white shadow rounded-lg p-3 flex items-center">
-                        <div class="mr-3">
-                            <p class="text-xs text-gray-500">Last Updated</p>
-                            <p class="text-sm font-medium" id="timestamp">Just now</p>
-                        </div>
-                        <div class="h-10 w-10 bg-blue-50 rounded-full flex items-center justify-center">
-                            <i class="fas fa-sync-alt text-blue-500 pulse"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-gradient-blue rounded-lg p-6 text-white flex flex-col md:flex-row justify-between items-start md:items-center">
-                <div>
-                    <div class="flex items-center">
-                        <span class="mr-2"><i class="fas fa-user-check"></i></span>
-                        <h2 class="text-xl font-semibold">Verified Owner: Alejandro Barron Monterrubio</h2>
-                        <span class="ml-2 bg-green-500 text-white rounded-full p-1" title="Verified"><i class="fas fa-check text-xs"></i></span>
-                    </div>
-                    <p class="mt-1 text-blue-100 text-sm">Financial Commission provides regulatory oversight only</p>
-                </div>
-                <div class="mt-4 md:mt-0 bg-white bg-opacity-10 rounded-lg px-4 py-2">
-                    <div class="flex items-center">
-                        <div class="ping mr-6">
-                            <span class="w-2 h-2 bg-green-400 rounded-full inline-block"></span>
-                        </div>
-                        <div>
-                            <p class="text-xs text-blue-100">Current ETH Price</p>
-                            <p class="text-lg font-bold" id="eth-price">$1,576.82</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Total Assets Overview -->
-        <div class="mb-8">
-            <div class="card p-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-800">Total Portfolio Value</h2>
-                        <p class="text-sm text-gray-500">Combined assets under verification</p>
-                    </div>
-                    <div class="mt-4 md:mt-0 flex items-center">
-                        <span class="text-green-500 mr-2"><i class="fas fa-lock"></i></span>
-                        <span class="text-sm text-gray-600">Secure Multi-Signature Protocol</span>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gradient-light rounded-lg p-4">
-                        <p class="text-gray-500 text-sm">Total ETH</p>
-                        <h3 class="text-3xl font-bold text-gray-800 mb-1 animated-value" id="total-eth">7,385.67 ETH</h3>
-                        <div class="flex items-center text-sm text-gray-500">
-                            <span class="text-green-500 mr-1"><i class="fas fa-arrow-up"></i></span>
-                            <span>2.3% from yesterday</span>
-                        </div>
-                    </div>
-                    <div class="bg-gradient-light rounded-lg p-4">
-                        <p class="text-gray-500 text-sm">Total USD Value</p>
-                        <h3 class="text-3xl font-bold text-gray-800 mb-1 animated-value" id="total-usd">$11,649,980.75</h3>
-                        <div class="flex items-center text-sm text-gray-500">
-                            <span class="text-green-500 mr-1"><i class="fas fa-arrow-up"></i></span>
-                            <span>1.8% from yesterday</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-6 p-3 bg-blue-50 rounded-lg">
-                    <div class="flex items-center">
-                        <span class="text-blue-500 mr-2"><i class="fas fa-info-circle"></i></span>
-                        <p class="text-sm text-gray-700">All funds are the verified property of Alejandro Barron Monterrubio. External authorization required for transfers.</p>
-                    </div>
-                </div>
-            </div>
+<body class="min-h-screen pt-8 pb-8">
+  <div class="max-w-5xl mx-auto px-2 sm:px-4">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-5">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight text-gray-800">Financial Commission Holdings</h1>
+        <div class="flex items-center mt-2">
+          <span class="badge-green mr-1">
+            <i class="fa fa-check-circle mr-1"></i>Verified
+          </span>
+          <span class="text-xs text-gray-500 ml-1">Dashboard ID: FCH-2023-045912</span>
         </div>
-
-        <!-- Asset Visualization -->
-        <div class="mb-8">
-            <div class="card p-6">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">Asset Overview</h2>
-                <div class="chart-container mb-4" id="asset-chart">
-                    <!-- This will be replaced with Chart.js -->
-                    <div class="h-full w-full flex items-center justify-center">
-                        <div class="w-full h-full" id="chartContainer"></div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                    <div class="p-2">
-                        <div class="w-3 h-3 bg-blue-500 rounded-full inline-block"></div>
-                        <span class="text-sm text-gray-600">Primary Holdings (0.9%)</span>
-                    </div>
-                    <div class="p-2">
-                        <div class="w-3 h-3 bg-green-500 rounded-full inline-block"></div>
-                        <span class="text-sm text-gray-600">Security Reserve (0.7%)</span>
-                    </div>
-                    <div class="p-2">
-                        <div class="w-3 h-3 bg-purple-500 rounded-full inline-block"></div>
-                        <span class="text-sm text-gray-600">Main Holdings (45.3%)</span>
-                    </div>
-                    <div class="p-2">
-                        <div class="w-3 h-3 bg-yellow-500 rounded-full inline-block"></div>
-                        <span class="text-sm text-gray-600">Strategic Fund (53.1%)</span>
-                    </div>
-                </div>
-            </div>
+      </div>
+      <div class="text-right">
+        <div class="bg-white border rounded-lg px-3 py-2 flex items-center max-w-xs justify-end">
+          <div class="mr-2">
+            <div class="text-xs text-gray-400">Last Updated</div>
+            <div class="text-sm text-gray-700" id="last-updated">Just now</div>
+          </div>
+          <i class="fas fa-sync-alt fa-circle-notch text-blue-500"></i>
         </div>
-
-        <!-- Wallet Cards -->
-        <div class="mb-8">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Wallet Details</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Wallet 1 -->
-                <div class="card">
-                    <div class="wallet-header bg-blue-50 p-4">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800">Primary Holdings Account</h3>
-                                <div class="flex items-center mt-1">
-                                    <span class="text-xs text-gray-500 bg-gray-100 rounded-md px-2 py-1">
-                                        <i class="fas fa-fingerprint mr-1"></i>
-                                        Property of Alejandro Barron Monterrubio
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="verification-badge">
-                                <i class="fas fa-check-circle mr-1"></i> Verified
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <div class="mb-4">
-                            <p class="text-xs text-gray-500 mb-1">Wallet Address</p>
-                            <div class="flex items-center">
-                                <p class="text-sm font-mono text-gray-700 truncate">0x0AFfB0a96FBefAa97dCe488DfD97512346cf3Ab8</p>
-                                <button class="ml-2 text-blue-500 text-xs">
-                                    <i class="far fa-copy"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <p class="text-xs text-gray-500">Balance</p>
-                                <p class="text-lg font-bold text-gray-800 animated-value">64.29 ETH</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500">Value (USD)</p>
-                                <p class="text-lg font-bold text-gray-800 animated-value">$101,363.12</p>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <div class="flex items-center">
-                                <span class="w-2 h-2 bg-blue-400 rounded-full mr-2 pulse"></span>
-                                <p class="text-sm text-gray-600">Status: <span class="font-medium">Awaiting External Authorization</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Wallet 2 -->
-                <div class="card">
-                    <div class="wallet-header bg-green-50 p-4">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800">Security Reserve Account</h3>
-                                <div class="flex items-center mt-1">
-                                    <span class="text-xs text-gray-500 bg-gray-100 rounded-md px-2 py-1">
-                                        <i class="fas fa-fingerprint mr-1"></i>
-                                        Property of Alejandro Barron Monterrubio
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="verification-badge">
-                                <i class="fas fa-check-circle mr-1"></i> Verified
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <div class="mb-4">
-                            <p class="text-xs text-gray-500 mb-1">Wallet Address</p>
-                            <div class="flex items-center">
-                                <p class="text-sm font-mono text-gray-700 truncate">0xa83114A443dA1CecEFC50368531cACE9F37fCCcb</p>
-                                <button class="ml-2 text-blue-500 text-xs">
-                                    <i class="far fa-copy"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <p class="text-xs text-gray-500">Balance</p>
-                                <p class="text-lg font-bold text-gray-800 animated-value">49.46 ETH</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500">Value (USD)</p>
-                                <p class="text-lg font-bold text-gray-800 animated-value">$78,042.59</p>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <div class="flex items-center">
-                                <span class="w-2 h-2 bg-yellow-400 rounded-full mr-2 pulse"></span>
-                                <p class="text-sm text-gray-600">Status: <span class="font-medium">External Verification Required</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Wallet 3 -->
-                <div class="card">
-                    <div class="wallet-header bg-purple-50 p-4">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800">Main Holdings Account</h3>
-                                <div class="flex items-center mt-1">
-                                    <span class="text-xs text-gray-500 bg-gray-100 rounded-md px-2 py-1">
-                                        <i class="fas fa-fingerprint mr-1"></i>
-                                        Property of Alejandro Barron Monterrubio
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="verification-badge">
-                                <i class="fas fa-check-circle mr-1"></i> Verified
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <div class="mb-4">
-                            <p class="text-xs text-gray-500 mb-1">Wallet Address</p>
-                            <div class="flex items-center">
-                                <p class="text-sm font-mono text-gray-700 truncate">0xb8901acb165ed027e32754e0ffe830802919727f</p>
-                                <button class="ml-2 text-blue-500 text-xs">
-                                    <i class="far fa-copy"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <p class="text-xs text-gray-500">Balance</p>
-                                <p class="text-lg font-bold text-gray-800 animated-value">3,345.74 ETH</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500">Value (USD)</p>
-                                <p class="text-lg font-bold text-gray-800 animated-value">$5,275,420.61</p>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <div class="flex items-center">
-                                <span class="w-2 h-2 bg-blue-400 rounded-full mr-2 pulse"></span>
-                                <p class="text-sm text-gray-600">Status: <span class="font-medium">External Approval Pending</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Wallet 4 -->
-                <div class="card">
-                    <div class="wallet-header bg-yellow-50 p-4">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800">Strategic Investment Fund</h3>
-                                <div class="flex items-center mt-1">
-                                    <span class="text-xs text-gray-500 bg-gray-100 rounded-md px-2 py-1">
-                                        <i class="fas fa-fingerprint mr-1"></i>
-                                        Property of Alejandro Barron Monterrubio
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="verification-badge">
-                                <i class="fas fa-check-circle mr-1"></i> Verified
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <div class="mb-4">
-                            <p class="text-xs text-gray-500 mb-1">Wallet Address</p>
-                            <div class="flex items-center">
-                                <p class="text-sm font-mono text-gray-700 truncate">0xe8367da88f393418680ee5388ee0726d782f6bbe</p>
-                                <button class="ml-2 text-blue-500 text-xs">
-                                    <i class="far fa-copy"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <p class="text-xs text-gray-500">Balance</p>
-                                <p class="text-lg font-bold text-gray-800 animated-value">3,926.18 ETH</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500">Value (USD)</p>
-                                <p class="text-lg font-bold text-gray-800 animated-value">$6,195,154.43</p>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <div class="flex items-center">
-                                <span class="w-2 h-2 bg-green-400 rounded-full mr-2 pulse"></span>
-                                <p class="text-sm text-gray-600">Status: <span class="font-medium">Awaiting Regulatory Authorization</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Blockchain Verification -->
-        <div class="mb-8">
-            <div class="card p-6">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">Blockchain Verification</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="bg-blue-50 rounded-lg p-4">
-                        <div class="flex items-center mb-2">
-                            <span class="text-blue-500 mr-2"><i class="fas fa-network-wired"></i></span>
-                            <h3 class="text-md font-semibold text-gray-800">Network Status</h3>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                            <p class="text-sm text-gray-600">Ethereum Mainnet: <span class="font-medium" id="network-status">Active</span></p>
-                        </div>
-                        <div class="flex items-center mt-2">
-                            <span class="text-green-500 mr-1"><i class="fas fa-arrow-up"></i></span>
-                            <p class="text-xs text-gray-500">Last block: <span id="last-block">#17692345</span></p>
-                        </div>
-                    </div>
-                    <div class="bg-blue-50 rounded-lg p-4">
-                        <div class="flex items-center mb-2">
-                            <span class="text-blue-500 mr-2"><i class="fas fa-check-double"></i></span>
-                            <h3 class="text-md font-semibold text-gray-800">Confirmations</h3>
-                        </div>
-                        <div class="confirmation-counter mb-2">
-                            <div class="confirmation-progress"></div>
-                        </div>
-                        <p class="text-sm text-gray-600 flex justify-between">
-                            <span>Last Verification</span>
-                            <span class="font-medium" id="confirmations">312 confirmations</span>
-                        </p>
-                    </div>
-                    <div class="bg-blue-50 rounded-lg p-4">
-                        <div class="flex items-center mb-2">
-                            <span class="text-blue-500 mr-2"><i class="fas fa-gas-pump"></i></span>
-                            <h3 class="text-md font-semibold text-gray-800">Network Fee</h3>
-                        </div>
-                        <p class="text-lg font-bold text-gray-800" id="gas-price">32 Gwei</p>
-                        <p class="text-xs text-gray-500">Avg. transaction time: <span id="tx-time">12 seconds</span></p>
-                    </div>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <div class="flex items-center mb-2">
-                        <span class="text-gray-500 mr-2"><i class="fas fa-info-circle"></i></span>
-                        <h3 class="text-md font-semibold text-gray-800">Ownership Verification</h3>
-                    </div>
-                    <p class="text-sm text-gray-600 mb-2">
-                        All wallets on this dashboard have been verified as property of Alejandro Barron Monterrubio through secure multi-signature protocols. External authorization is required for any fund movement due to regulatory requirements.
-                    </p>
-                    <div class="text-xs text-gray-500 ticker">
-                        <div class="ticker-content">
-                            <span class="inline-block px-2">Ownership verified ✓</span>
-                            <span class="inline-block px-2">•</span>
-                            <span class="inline-block px-2">Multi-signature security active ✓</span>
-                            <span class="inline-block px-2">•</span>
-                            <span class="inline-block px-2">Blockchain confirmation complete ✓</span>
-                            <span class="inline-block px-2">•</span>
-                            <span class="inline-block px-2">External authorization pending ⟳</span>
-                            <span class="inline-block px-2">•</span>
-                            <span class="inline-block px-2">Funds secured ✓</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer class="mt-8 text-center text-sm text-gray-500 pb-8">
-            <div class="flex justify-center items-center mb-4">
-                <div class="mx-2 flex items-center">
-                    <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
-                    <span>System Online</span>
-                </div>
-                <div class="mx-2">
-                    <i class="fas fa-shield-alt text-blue-500"></i>
-                    <span>Secured</span>
-                </div>
-                <div class="mx-2">
-                    <i class="fas fa-lock text-blue-500"></i>
-                    <span>Encrypted</span>
-                </div>
-            </div>
-            <p>Financial Commission Holdings • Secure Asset Verification Portal</p>
-            <p class="mt-1">© 2023 All Rights Reserved • <a href="#" class="text-blue-500">Terms of Service</a> • <a href="#" class="text-blue-500">Privacy Policy</a></p>
-        </footer>
+      </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-    <script>
-        // Simulated real-time updates
-        function updateTimestamp() {
-            const timeSince = ["Just now", "1 minute ago", "2 minutes ago", "3 minutes ago", "4 minutes ago"];
-            const randomTime = timeSince[Math.floor(Math.random() * 2)];
-            document.getElementById('timestamp').textContent = randomTime;
+    <!-- Owner Banner -->
+    <div class="rounded-lg bg-gradient-to-br from-blue-700 to-blue-500 text-white flex flex-col md:flex-row justify-between items-start md:items-center px-6 py-5 mb-6 shadow sm:py-6">
+      <div>
+        <div class="flex items-center">
+          <i class="fa fa-user-check mr-2"></i>
+          <div class="text-lg md:text-xl font-semibold">Verified Owner: Alejandro Barron Monterrubio</div>
+          <span class="ml-2 bg-green-500 text-white rounded-full p-1" title="Verified"><i class="fas fa-check text-xs"></i></span>
+        </div>
+        <div class="mt-1 text-blue-100 text-xs md:text-sm">Financial Commission provides regulatory oversight only</div>
+      </div>
+      <div class="mt-3 md:mt-0 bg-white bg-opacity-10 rounded-lg px-4 py-2 flex items-center">
+        <span class="w-3 h-3 bg-green-400 rounded-full inline-block mr-3"></span>
+        <div>
+          <div class="text-xs text-blue-200">Current ETH Price</div>
+          <div class="text-lg font-bold" id="eth-price">$1,767.75</div>
+        </div>
+      </div>
+    </div>
+    <!-- Notifications -->
+    <div class="mb-6 card text-sm text-gray-700 flex items-center">
+      <i class="fas fa-lock text-blue-500 mr-3"></i>
+      <div>
+      <span class="font-semibold">IMPORTANT NOTICE:</span> The principal amount is guaranteed by Financial Commission Holdings.<br class="sm:hidden"> Returns are subject to external review of the positions taken in the trading platform used.<br>
+      Final disbursement will be determined following comprehensive verification procedures.<br>
+      Funds will be released according to the information provided, at times the Financial Commission deems appropriate and following verification protocols.
+      </div>
+    </div>
+    <!-- Portfolio Value & Security -->
+    <div class="mb-6 card">
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-3">
+        <div>
+          <h2 class="text-lg font-bold text-gray-800">Total Portfolio Value</h2>
+          <div class="text-xs text-gray-400">Combined assets under verification</div>
+        </div>
+        <div class="flex items-center mt-2 md:mt-0">
+          <i class="fa fa-lock text-green-500 mr-2"></i>
+          <span class="text-xs text-gray-600">Secure Multi-Signature Protocol</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-gradient-to-tl from-gray-50 via-gray-100 to-white rounded-lg px-4 py-3 mb-0.5 h-24 flex flex-col justify-center">
+          <div class="text-gray-500 text-xs mb-1">Total ETH</div>
+          <div class="text-2xl font-bold text-gray-800" id="total-eth">7,005.16 ETH</div>
+        </div>
+        <div class="bg-gradient-to-tl from-gray-50 via-gray-100 to-white rounded-lg px-4 py-3 mb-0.5 h-24 flex flex-col justify-center">
+          <div class="text-gray-500 text-xs mb-1">Total USD Value</div>
+          <div class="text-2xl font-bold text-gray-800" id="total-usd">$12,422,163.63</div>
+        </div>
+      </div>
+    </div>
+    <!-- Asset Overview (Donut Chart) -->
+    <div class="mb-6 card">
+      <h2 class="text-lg font-bold text-gray-800 mb-3">Asset Overview</h2>
+      <div class="chart-container flex items-center justify-center">
+        <canvas id="assetChart" style="max-width: 310px;"></canvas>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-center text-xs md:text-sm">
+        <div class="flex items-center justify-center space-x-2"><span class="w-3 h-3 bg-blue-500 rounded-full inline-block"></span><span>Wallet 1 (69.4%)</span></div>
+        <div class="flex items-center justify-center space-x-2"><span class="w-3 h-3 bg-green-400 rounded-full inline-block"></span><span>Wallet 2 (30.6%)</span></div>
+      </div>
+    </div>
+    <!-- Verification Timeline & Monitoring -->
+    <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="card">
+        <h2 class="text-lg font-bold text-gray-800 mb-2">Verification Process Timeline</h2>
+        <div>
+          <div class="timeline-step"><span class="timeline-dot dot-done"></span>Initial Application <span class="text-green-500 ml-2"><i class="fas fa-check"></i></span></div>
+          <div class="timeline-step"><span class="timeline-dot dot-done"></span>Identity Verification <span class="text-green-500 ml-2"><i class="fas fa-check"></i></span></div>
+          <div class="timeline-step"><span class="timeline-dot dot-done"></span>Ownership Confirmation <span class="text-green-500 ml-2"><i class="fas fa-check"></i></span></div>
+          <div class="timeline-step"><span class="timeline-dot dot-done"></span>Security Protocol Implementation <span class="text-green-500 ml-2"><i class="fas fa-check"></i></span></div>
+          <div class="timeline-step"><span class="timeline-dot dot-pending"></span>Next Release Authorization <span class="text-yellow-500 ml-2"><i class="fas fa-clock"></i></span></div>
+          <div class="timeline-step"><span class="timeline-dot dot-future"></span>Final Clearance</div>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="text-lg font-bold text-gray-800 mb-2">Active Monitoring</h2>
+        <div class="space-y-2 text-sm">
+          <div class="flex items-center"><span class="w-3 h-3 bg-green-400 rounded-full mr-2"></span>Active Security Monitoring: <span class="font-semibold ml-1">Live</span></div>
+          <div class="flex items-center"><i class="fas fa-history text-blue-400 mr-2"></i>Last System Check: <span id="last-check" class="ml-1">5 minutes ago</span></div>
+          <div class="flex items-center"><i class="fas fa-detective text-green-500 mr-2"></i>Anomaly Detection System: <span class="font-semibold ml-1">Active</span></div>
+          <div class="flex items-center"><i class="fas fa-link text-blue-500 mr-2"></i>Blockchain Monitor: <span class="font-semibold ml-1">Connected</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- Processing Activities Log & Regulatory Compliance -->
+    <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="card">
+        <h2 class="text-lg font-bold text-gray-800 mb-2">Processing Activities Log</h2>
+        <ul class="text-xs md:text-sm text-gray-700 space-y-2 list-disc list-inside pl-2">
+          <li><span class="text-gray-500">April 17, 2025:</span> Ownership documents review in process</li>
+          <li><span class="text-gray-500">March 11, 2025:</span> First withdrawal completed</li>
+          <li><span class="text-gray-500">March 07, 2025:</span> Ownership documents review completed</li>
+          <li><span class="text-gray-500">March 02, 2025:</span> Multi-signature protocol verification passed</li>
+          <li><span class="text-gray-500">February 10, 2025:</span> Background verification completed</li>
+          <li><span class="text-gray-500">January 15, 2025:</span> Initial application received</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2 class="text-lg font-bold text-gray-800 mb-2">Regulatory Compliance Status</h2>
+        <ul class="text-xs md:text-sm text-gray-700 space-y-2 list-disc list-inside pl-2">
+          <li>KYC (Know Your Customer): <span class="text-green-500 font-bold ml-1">Verified</span></li>
+          <li>AML (Anti-Money Laundering): <span class="text-yellow-500 font-bold ml-1">In process</span></li>
+          <li>International Transfer Authorization: <span class="text-yellow-500 font-bold ml-1">Pending Approval</span></li>
+          <li>Regulatory Reporting Status: <span class="text-green-500 font-bold ml-1">In Compliance</span></li>
+        </ul>
+      </div>
+    </div>
+    <!-- Approval Requirements -->
+    <div class="mb-6 card">
+      <h2 class="text-lg font-bold text-gray-800 mb-2">Approval Requirements</h2>
+      <ul class="text-xs md:text-sm text-gray-700 space-y-2 list-disc list-inside pl-2">
+        <li>Commission Board Approval: <span class="text-yellow-500 font-bold ml-1">Pending</span></li>
+        <li>External Auditor Verification: <span class="text-green-500 font-bold ml-1">Completed</span></li>
+        <li>Legal Documentation: <span class="text-yellow-500 font-bold ml-1">Under Review</span></li>
+        <li>Regulatory Compliance: <span class="text-green-500 font-bold ml-1">Verified</span></li>
+        <li>Transfer Protocol Testing: <span class="text-blue-500 font-bold ml-1">Scheduled</span></li>
+      </ul>
+    </div>
+    <!-- Wallet Details -->
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-3">Wallet Details</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Wallet 1 -->
+        <div class="card shadow-sm">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <div class="text-sm font-semibold text-gray-800">Wallet 1</div>
+              <span class="text-xs text-gray-500 bg-gray-100 rounded-md px-2 py-1 mr-2">
+                <i class="fas fa-fingerprint mr-1"></i> Property of Alejandro Barron Monterrubio
+              </span>
+            </div>
+            <span class="badge-green">
+              <i class="fas fa-check-circle mr-1"></i>Verified
+            </span>
+          </div>
+          <div>
+            <div class="mb-2">
+              <div class="text-xs text-gray-400 mb-0.5">Wallet Address</div>
+              <div class="flex items-center">
+                <span class="text-xs md:text-sm text-gray-700 font-mono truncate">0x58F4FaDfb876964C7d4150CA0c95c809A4BC4b54</span>
+                <button onclick="copyToClipboard('0x58F4FaDfb876964C7d4150CA0c95c809A4BC4b54')" class="ml-2 text-blue-500 text-xs focus:outline-none" title="Copy"><i class="far fa-copy"></i></button>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-2">
+              <div>
+                <div class="text-xs text-gray-400">Balance</div>
+                <div class="text-lg font-bold text-gray-800">4,864.32 ETH</div>
+              </div>
+              <div>
+                <div class="text-xs text-gray-400">Value (USD)</div>
+                <div class="text-lg font-bold text-gray-800">$8,637,692.51</div>
+              </div>
+            </div>
+            <div class="flex items-center mt-1">
+              <span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+              <span class="text-xs text-gray-600">Status: <span class="font-medium">Awaiting External Authorization</span></span>
+            </div>
+          </div>
+        </div>
+        <!-- Wallet 2 -->
+        <div class="card shadow-sm">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <div class="text-sm font-semibold text-gray-800">Wallet 2</div>
+              <span class="text-xs text-gray-500 bg-gray-100 rounded-md px-2 py-1 mr-2">
+                <i class="fas fa-fingerprint mr-1"></i> Property of Alejandro Barron Monterrubio
+              </span>
+            </div>
+            <span class="badge-green">
+              <i class="fas fa-check-circle mr-1"></i>Verified
+            </span>
+          </div>
+          <div>
+            <div class="mb-2">
+              <div class="text-xs text-gray-400 mb-0.5">Wallet Address</div>
+              <div class="flex items-center">
+                <span class="text-xs md:text-sm text-gray-700 font-mono truncate">0x4175Ce7926EEAB35Ea9BBf67270CF04EcE88e862</span>
+                <button onclick="copyToClipboard('0x4175Ce7926EEAB35Ea9BBf67270CF04EcE88e862')" class="ml-2 text-blue-500 text-xs focus:outline-none" title="Copy"><i class="far fa-copy"></i></button>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-2">
+              <div>
+                <div class="text-xs text-gray-400">Balance</div>
+                <div class="text-lg font-bold text-gray-800">2,140.84 ETH</div>
+              </div>
+              <div>
+                <div class="text-xs text-gray-400">Value (USD)</div>
+                <div class="text-lg font-bold text-gray-800">$3,784,471.12</div>
+              </div>
+            </div>
+            <div class="flex items-center mt-1">
+              <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+              <span class="text-xs text-gray-600">Status: <span class="font-medium">Verification In Progress</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Blockchain Verification -->
+    <div class="mb-8 card">
+      <h2 class="text-lg font-bold text-gray-800 mb-3">Blockchain Verification</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-blue-50 rounded-lg p-4 flex flex-col mb-1">
+          <div class="flex items-center mb-1">
+            <span class="text-blue-500 mr-2"><i class="fas fa-network-wired"></i></span>
+            <span class="text-md font-semibold text-gray-800">Network Status</span>
+          </div>
+          <div class="flex items-center">
+            <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+            <span class="text-xs text-gray-600">Ethereum Mainnet: <span class="font-medium" id="network-status">Active</span></span>
+          </div>
+          <div class="flex items-center mt-1">
+            <span class="text-green-500 mr-1"><i class="fas fa-arrow-up"></i></span>
+            <span class="text-xs text-gray-500">Last block: <span id="last-block">#17962345</span></span>
+          </div>
+        </div>
+        <div class="bg-blue-50 rounded-lg p-4 flex flex-col mb-1">
+          <div class="flex items-center mb-1">
+            <span class="text-blue-500 mr-2"><i class="fas fa-check-double"></i></span>
+            <span class="text-md font-semibold text-gray-800">Confirmations</span>
+          </div>
+          <div class="flex items-center mt-1">
+            <div class="w-full bg-gray-200 h-2 rounded-full mr-2" style="max-width: 120px;">
+              <div class="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full" style="width:78%;"></div>
+            </div>
+            <span class="text-xs text-gray-700"><span id="confirmations">312</span> confirmations</span>
+          </div>
+        </div>
+        <div class="bg-blue-50 rounded-lg p-4 flex flex-col mb-1">
+          <div class="flex items-center mb-1">
+            <span class="text-blue-500 mr-2"><i class="fas fa-gas-pump"></i></span>
+            <span class="text-md font-semibold text-gray-800">Network Fee</span>
+          </div>
+          <span class="text-lg font-bold text-gray-800" id="gas-fee">29 Gwei</span>
+          <span class="text-xs text-gray-500">Avg. transaction time: <span id="tx-time">12 seconds</span></span>
+        </div>
+      </div>
+      <div class="bg-gray-50 p-3 mt-4 rounded-lg text-xs text-gray-600 flex items-center">
+        <span class="text-gray-400 mr-2"><i class="fas fa-info-circle"></i></span>
+        All wallets on this dashboard have been verified as property of Alejandro Barron Monterrubio through secure multi-signature protocols. External authorization is required for any fund movement due to regulatory requirements.
+      </div>
+    </div>
+    <!-- Footer -->
+    <footer class="text-center text-xs text-gray-400 mt-8">
+      <div class="flex justify-center items-center mb-1">
+        <div class="mx-2 flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>System Online</div>
+        <div class="mx-2 flex items-center"><i class="fas fa-shield-alt text-blue-500 mr-1"></i>Secured</div>
+        <div class="mx-2 flex items-center"><i class="fas fa-lock text-blue-500 mr-1"></i>Encrypted</div>
+      </div>
+      Financial Commission Holdings &bull; Secure Asset Verification Portal<br>
+      &copy; 2023 All Rights Reserved
+    </footer>
+  </div>
+  <script>
+    // Chart rendering logic
+    window.addEventListener('DOMContentLoaded', () => {
+      // Donut Chart (Combined ETH)
+      const wallet1 = 4864.32;
+      const wallet2 = 2140.84;
+      const ctx = document.getElementById('assetChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Wallet 1', 'Wallet 2'],
+          datasets: [{
+            data: [wallet1, wallet2],
+            backgroundColor: [
+              'rgba(59, 130, 246, 0.85)', // blue
+              'rgba(16, 185, 129, 0.85)'  // green
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: {
+              label: function(context) {
+                const val = context.raw || 0;
+                const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                const pct = Math.round((val/total)*1000)/10;
+                return `${context.label}: ${val.toLocaleString()} ETH (${pct}%)`;
+              }
+            }}
+          },
+          cutout: '78%',
+          responsive: true,
+          maintainAspectRatio: false
         }
-
-        function updateEthPrice() {
-            // Generate a small random fluctuation
-            const basePrice = 1576.82;
-            const fluctuation = (Math.random() * 10 - 5); // -5 to +5
-            const newPrice = (basePrice + fluctuation).toFixed(2);
-            document.getElementById('eth-price').textContent = `$${newPrice}`;
-            
-            // Update USD values based on new ETH price
-            updateWalletValues(newPrice);
-        }
-
-        function updateWalletValues(ethPrice) {
-            // Small random fluctuations in ETH amounts
-            const wallet1ETH = (64.29 + (Math.random() * 0.02 - 0.01)).toFixed(2);
-            const wallet2ETH = (49.46 + (Math.random() * 0.02 - 0.01)).toFixed(2);
-            const wallet3ETH = (3345.74 + (Math.random() * 0.2 - 0.1)).toFixed(2);
-            const wallet4ETH = (3926.18 + (Math.random() * 0.2 - 0.1)).toFixed(2);
-            
-            // Calculate USD values
-            const wallet1USD = (wallet1ETH * ethPrice).toFixed(2);
-            const wallet2USD = (wallet2ETH * ethPrice).toFixed(2);
-            const wallet3USD = (wallet3ETH * ethPrice).toFixed(2);
-            const wallet4USD = (wallet4ETH * ethPrice).toFixed(2);
-            
-            // Update total values
-            const totalETH = (parseFloat(wallet1ETH) + parseFloat(wallet2ETH) + parseFloat(wallet3ETH) + parseFloat(wallet4ETH)).toFixed(2);
-            const totalUSD = (parseFloat(wallet1USD) + parseFloat(wallet2USD) + parseFloat(wallet3USD) + parseFloat(wallet4USD)).toFixed(2);
-            
-            document.getElementById('total-eth').textContent = `${totalETH} ETH`;
-            document.getElementById('total-usd').textContent = `$${numberWithCommas(totalUSD)}`;
-        }
-
-        function updateNetworkStatus() {
-            const statuses = ["Active", "Busy", "Normal"];
-            const blocks = ["#17692345", "#17692346", "#17692347", "#17692348"];
-            document.getElementById('network-status').textContent = statuses[Math.floor(Math.random() * statuses.length)];
-            document.getElementById('last-block').textContent = blocks[Math.floor(Math.random() * blocks.length)];
-        }
-
-        function updateConfirmations() {
-            const confirmations = Math.floor(300 + Math.random() * 30);
-            document.getElementById('confirmations').textContent = `${confirmations} confirmations`;
-        }
-
-        function updateGas() {
-            const gas = Math.floor(20 + Math.random() * 30);
-            const time = Math.floor(10 + Math.random() * 10);
-            document.getElementById('gas-price').textContent = `${gas} Gwei`;
-            document.getElementById('tx-time').textContent = `${time} seconds`;
-        }
-
-        function numberWithCommas(x) {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
-
-        // Create chart
-        window.onload = function() {
-            // Initialize chart
-            const ctx = document.createElement('canvas');
-            document.getElementById('chartContainer').appendChild(ctx);
-            
-            const myChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Primary Holdings', 'Security Reserve', 'Main Holdings', 'Strategic Fund'],
-                    datasets: [{
-                        data: [64.29, 49.46, 3345.74, 3926.18],
-                        backgroundColor: [
-                            'rgba(59, 130, 246, 0.8)',  // blue
-                            'rgba(16, 185, 129, 0.8)',  // green
-                            'rgba(139, 92, 246, 0.8)',  // purple
-                            'rgba(245, 158, 11, 0.8)'   // yellow
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
-                                    const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                    const percentage = Math.round((value / total) * 100);
-                                    return `${label}: ${value} ETH (${percentage}%)`;
-                                }
-                            }
-                        }
-                    },
-                    cutout: '70%',
-                    animation: {
-                        animateRotate: true,
-                        animateScale: true
-                    }
-                }
-            });
-
-            // Set up periodic updates
-            setInterval(updateTimestamp, 5000);
-            setInterval(updateEthPrice, 3000);
-            setInterval(updateNetworkStatus, 7000);
-            setInterval(updateConfirmations, 5000);
-            setInterval(updateGas, 11000);
-            
-            // Initial updates
-            updateTimestamp();
-            updateEthPrice();
-            updateNetworkStatus();
-            updateConfirmations();
-            updateGas();
-        };
-    </script>
+      });
+    });
+    // Copy to clipboard
+    function copyToClipboard(addr) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(addr);
+      } else {
+        const temp = document.createElement('input');
+        document.body.appendChild(temp);
+        temp.value = addr;
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+      }
+    }
+  </script>
 </body>
