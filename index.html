@@ -405,17 +405,3 @@
   </script>
 </body>
 </html>
-
-
-        navigator.clipboard.writeText(addr);
-      } else {
-        const temp = document.createElement('input');
-        document.body.appendChild(temp);
-        temp.value = addr;
-        temp.select();
-        document.execCommand('copy');
-        document.body.removeChild(temp);
-      }
-    }
-  </script>
-</body>
